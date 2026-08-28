@@ -442,8 +442,15 @@ main :: proc() {
 	}
 	defer unmap_model_file(model, file_size)
 
-	state := new(InferenceState)
-	defer free(state)
+	// Allocate 64-byte aligned InferenceState
+	state_raw_bytes, alloc_err := mem.alloc(size_of(InferenceState), 64)
+	if alloc_err != nil {
+		fmt.eprintfln("Failed to allocate InferenceState memory: %v", alloc_err)
+		os.exit(1)
+	}
+	mem.zero(state_raw_bytes, size_of(InferenceState))
+	state := cast(^InferenceState)state_raw_bytes
+	defer mem.free(state)
 
 	scores_buf := make([]f32, MAX_CONTEXT + BATCH_SIZE)
 	defer delete(scores_buf)
