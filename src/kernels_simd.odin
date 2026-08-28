@@ -127,7 +127,8 @@ weighted_value_sum_simd :: proc(
 			out_v := simd.from_slice(#simd[8]f32, output[j:])
 			val_v := simd.from_slice(#simd[8]f32, val[j:])
 			res_v := out_v + prob_vec * val_v
-			simd.to_slice(output[j:], res_v)
+			res_arr := simd.to_array(res_v)
+			copy(output[j:j+8], res_arr[:])
 			j += 8
 		}
 		for j < head_dim {
