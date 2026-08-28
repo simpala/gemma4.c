@@ -73,7 +73,7 @@ Model :: struct #packed {
 	weights: ModelWeights,
 }
 
-InferenceState :: struct {
+InferenceState :: struct #align(64) {
 	residual: [BATCH_SIZE * HIDDEN_SIZE]f32,
 	hidden: [BATCH_SIZE * 8 * HIDDEN_SIZE]f32,
 	auxiliary: [BATCH_SIZE * 8 * HIDDEN_SIZE]f32,
