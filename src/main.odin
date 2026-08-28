@@ -94,7 +94,12 @@ attention_forward :: proc(
 		cache_owner -= 1
 	}
 
-	key_cache := full_attention ? state.full_cache[cache_owner / 5][:] : state.sliding_cache[cache_owner / 5][cache_owner % 5][:]
+	key_cache: []f32
+	if full_attention {
+		key_cache = state.full_cache[cache_owner / 5][:]
+	} else {
+		key_cache = state.sliding_cache[cache_owner / 5][cache_owner % 5][:]
+	}
 	value_cache := key_cache[cache_len * head_dim:]
 
 	quantize_scalar(state.quantized[:], state.activation_scales[:], state.hidden[:], token_count, int(weights.q_proj.shape[1]))
